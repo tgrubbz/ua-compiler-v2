@@ -72,6 +72,9 @@ std::vector<token*> lexer::lex(std::string s)
 		case '^':
 			tokens.push_back(puncop(carat));
 			break;
+		case ';':
+			tokens.push_back(puncop(semicolon));
+			break;
 		case '#':
 			comment();
 			break;

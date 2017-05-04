@@ -48,19 +48,27 @@ decl * translator::on_let_completion(decl *, expr *)
 	return nullptr;
 }
 
-decl * translator::on_variable_declaration(type *, std::string)
+decl * translator::on_variable_declaration(type * t, std::string s)
 {
-	return nullptr;
+	// Create the variable.
+	var_decl * var = new var_decl(s, t);
+
+	// Declare the variable.
+	declare(var);
+
+	return var;
 }
 
-decl * translator::on_variable_completion(decl *)
+decl * translator::on_variable_completion(decl * d)
 {
-	return nullptr;
+	return static_cast<var_decl *>(d);
 }
 
-decl * translator::on_variable_completion(decl *, expr *)
+decl * translator::on_variable_completion(decl * d, expr * e)
 {
-	return nullptr;
+	var_decl * v = static_cast<var_decl *>(d);
+	v->e = e;
+	return v;
 }
 
 stmt * translator::on_block_statement(std::vector<stmt*> stmts)
@@ -132,12 +140,12 @@ type * translator::on_void_type(token *)
 
 type * translator::on_bool_type(token *)
 {
-	return nullptr;
+	return ctx->bool_ty;
 }
 
 type * translator::on_int_type(token *)
 {
-	return nullptr;
+	return ctx->int_ty;
 }
 
 type * translator::on_nat_type(token *)

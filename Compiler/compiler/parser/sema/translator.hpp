@@ -8,6 +8,7 @@
 
 class context;
 class conversion;
+class stmt;
 
 class translator
 {

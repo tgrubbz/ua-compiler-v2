@@ -29,7 +29,7 @@ private:
 	token * get();
 	void next();
 	void back();
-	void match(token_kind);
+	token * match(token_kind);
 	token * match_if(token_kind);
 	token * consume();
 

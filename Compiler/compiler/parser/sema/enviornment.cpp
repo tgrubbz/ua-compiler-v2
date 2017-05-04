@@ -86,6 +86,10 @@ void enviornment::remove_scope()
 
 scope * enviornment::current_scope()
 {
-	stk.empty();
+	if (stk.empty())
+	{
+		new_scope(module);
+	}
+
 	return stk.top();
 }

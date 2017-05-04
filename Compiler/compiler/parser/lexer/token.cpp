@@ -33,6 +33,8 @@ std::map<token_kind, std::string> token_kind_map
 	{ open_brace, "OPEN_BRACE" },
 	{ close_brace, "CLOSE_BRACE" },
 	{ comma, "COMMA" },
+	{ open_bracket, "OPEN_BRACKET" },
+	{ close_bracket, "CLOSE_BRACKET" },
 
 	// keywords
 	{ bool_kw, "BOOL_KW" },

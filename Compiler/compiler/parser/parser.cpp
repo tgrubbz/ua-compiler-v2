@@ -41,13 +41,13 @@ void parser::back()
 	--current;
 }
 
-void parser::match(token_kind kind)
+token * parser::match(token_kind kind)
 {
 	if (get()->kind != kind)
 	{
 		throw std::runtime_error("expected some token");
 	}
-	next();
+	return consume();
 }
 
 token * parser::match_if(token_kind kind)
@@ -102,7 +102,7 @@ decl * parser::toplevel_declaration()
 
 decl * parser::block_declaration()
 {
-	return nullptr;
+	return variable_declaration();
 }
 
 std::vector<decl*> parser::function_parameter_list()
@@ -122,12 +122,34 @@ decl * parser::let_declaration()
 
 decl * parser::variable_declaration()
 {
-	return nullptr;
+	match(var_kw);
+	type * t = type_specifier();
+	std::string s = identifier();
+	decl * var = sema->on_variable_declaration(t, s);
+
+	if (!empty() && get()->kind == semicolon) 
+	{
+		var = sema->on_variable_completion(var);
+	}
+	else if (match_if(equals)) 
+	{
+		expr * e = conditional_expression();
+		var = sema->on_variable_completion(var, e);
+	}
+
+	match(semicolon);
+	return var;
 }
 
 type * parser::type_specifier()
 {
-	return nullptr;
+	type * t = simple_type_specifier();
+	if (match_if(ampersand))
+	{
+		return sema->on_reference_type(t);
+	}
+
+	return t;
 }
 
 type * parser::postfix_type_specifier()
@@ -147,7 +169,20 @@ std::vector<type*> parser::type_specifier_list()
 
 type * parser::simple_type_specifier()
 {
-	return nullptr;
+	if(!empty())
+	{
+		switch (get()->kind)
+		{
+		case bool_kw:
+			return sema->on_bool_type(consume());
+		case int_kw:
+			return sema->on_int_type(consume());
+		default:
+			break;
+		}
+	}
+
+	throw std::runtime_error("expected simple-type-specifier");
 }
 
 // statements
@@ -637,10 +672,8 @@ expr * parser::id_expression()
 
 std::string parser::identifier()
 {
-	std::cout << "identifier" << std::endl;
-	next();
-	match(token_kind::identifier);
-	return sema->on_identifier(consume());
+	std::cout << "identifier" << std::endl;	;
+	return sema->on_identifier(match(token_kind::identifier));
 }
 
 #pragma endregion

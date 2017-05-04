@@ -17,6 +17,7 @@ public:
 class var_decl : public decl
 {
 public:
+	var_decl(std::string, type *);
 	var_decl(std::string, type *, expr *);
 
 	expr * e;

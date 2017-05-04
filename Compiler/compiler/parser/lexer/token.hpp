@@ -38,6 +38,8 @@ enum token_kind
 	semicolon,
 	equals,
 	comma,
+	open_bracket,
+	close_bracket,
 
 	// keywords
 	bool_kw,
