@@ -151,6 +151,7 @@ type * parser::simple_type_specifier()
 }
 
 // statements
+#pragma region statements
 
 std::vector<stmt*> parser::statement_seq()
 {
@@ -214,58 +215,54 @@ stmt * parser::if_statement()
 
 stmt * parser::while_statement()
 {
-	return nullptr;
+	match(while_kw);
+	match(open_parenthesis);
+	expr * e = expression();
+	match(close_parenthesis);
+	stmt * l = sema->on_while_initiation(e);
+	stmt * s = statement();
+	return sema->on_while_completion(l, s);
 }
 
 stmt * parser::break_statement()
 {
-	return nullptr;
+	match(break_kw);
+	match(semicolon);
+	return sema->on_break_statement();
 }
 
 stmt * parser::continue_statement()
 {
-	return nullptr;
+	match(continue_kw);
+	match(semicolon);
+	return sema->on_continue_statement();
 }
 
 stmt * parser::return_statement()
 {
-	return nullptr;
-}
-
-stmt * parser::assert_statement()
-{
-	return nullptr;
-}
-
-stmt * parser::print_statement()
-{
-	return nullptr;
-}
-
-stmt * parser::scan_statement()
-{
-	return nullptr;
-}
-
-stmt * parser::skip_statement()
-{
-	return nullptr;
-}
-
-stmt * parser::trap_statement()
-{
-	return nullptr;
+	match(return_kw);
+	if (match_if(semicolon))
+	{
+		return sema->on_return_statement();
+	}
+	expr * e = expression();
+	match(semicolon);
+	return sema->on_return_statement(e);
 }
 
 stmt * parser::declaration_statement()
 {
-	return nullptr;
+	return sema->on_declaration_statement(block_declaration());
 }
 
 stmt * parser::expression_statement()
 {
-	return nullptr;
+	expr * e = expression();
+	match(semicolon);
+	return sema->on_expression_statement(e);
 }
+
+#pragma endregion
 
 // expressions
 #pragma region expressions

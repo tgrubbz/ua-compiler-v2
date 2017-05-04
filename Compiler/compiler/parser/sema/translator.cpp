@@ -63,79 +63,66 @@ decl * translator::on_variable_completion(decl *, expr *)
 	return nullptr;
 }
 
-stmt * translator::on_block_statement(std::vector<stmt*> ss)
+stmt * translator::on_block_statement(std::vector<stmt*> stmts)
 {
-	return nullptr;
+	return new block_stmt(stmts);
 }
 
-stmt * translator::on_if_statement(expr *, stmt *, stmt *)
+stmt * translator::on_if_statement(expr * e, stmt * true_block, stmt * false_block)
 {
-	return nullptr;
+	return new if_stmt(convert->to_bool(e), true_block, false_block);
 }
 
-stmt * translator::on_while_initiation(expr *)
+stmt * translator::on_while_initiation(expr * e)
 {
-	return nullptr;
+	e = convert->to_bool(e);
+	while_stmt * loop = new while_stmt(e, nullptr);
+	
+	// TODO: add loop control
+
+	return loop;
 }
 
-stmt * translator::on_while_completion(stmt *, stmt *)
+stmt * translator::on_while_completion(stmt * s1, stmt * s2)
 {
-	return nullptr;
+	while_stmt * loop = static_cast<while_stmt *>(s1);
+	loop->body = s2;
+	
+	// TODO: remove control
+
+	return loop;
 }
 
 stmt * translator::on_break_statement()
 {
-	return nullptr;
+	// TODO: check for loop
+	return new break_stmt();
 }
 
 stmt * translator::on_continue_statement()
 {
-	return nullptr;
+	// TODO: check for loop
+	return new continue_stmt();
 }
 
 stmt * translator::on_return_statement()
 {
-	return nullptr;
+	throw std::runtime_error("Void return not supported");
 }
 
-stmt * translator::on_return_statement(expr *)
+stmt * translator::on_return_statement(expr * e)
 {
-	return nullptr;
+	return new return_stmt(e);
 }
 
-stmt * translator::on_assert_statement(expr *)
+stmt * translator::on_declaration_statement(decl * d)
 {
-	return nullptr;
+	return new decl_stmt(d);
 }
 
-stmt * translator::on_print_statement(expr *)
+stmt * translator::on_expression_statement(expr * e)
 {
-	return nullptr;
-}
-
-stmt * translator::on_scan_statement(expr *)
-{
-	return nullptr;
-}
-
-stmt * translator::on_skip_statement()
-{
-	return nullptr;
-}
-
-stmt * translator::on_trap_statement()
-{
-	return nullptr;
-}
-
-stmt * translator::on_declaration_statement(decl *)
-{
-	return nullptr;
-}
-
-stmt * translator::on_expression_statement(expr *)
-{
-	return nullptr;
+	return new expr_stmt(e);
 }
 
 type * translator::on_void_type(token *)
